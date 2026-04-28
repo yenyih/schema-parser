@@ -8,16 +8,56 @@ import java.util.stream.Collectors;
 public class RecordCodeGenerator {
 
     public String generate(List<ColumnInfo> columns) {
-        String params = columns.stream()
-            .map(col -> "String " + col.name())
-            .collect(Collectors.joining(", "));
-        String toStringReturn = buildToStringReturn(columns);
-        return "public record Record(" + params + ") {\n" +
-               "    @Override\n" +
-               "    public String toString() {\n" +
-               "        return " + toStringReturn + ";\n" +
-               "    }\n" +
-               "}";
+        StringBuilder sb = new StringBuilder();
+        sb.append("public class Record {\n");
+
+        // Private fields
+        for (ColumnInfo col : columns) {
+            sb.append("    private String ").append(col.name()).append(";\n");
+        }
+        sb.append("\n");
+
+        // No-args constructor
+        sb.append("    public Record() {\n");
+        sb.append("    }\n\n");
+
+        // All-args constructor
+        if (!columns.isEmpty()) {
+            sb.append("    public Record(");
+            String params = columns.stream()
+                .map(col -> "String " + col.name())
+                .collect(Collectors.joining(", "));
+            sb.append(params).append(") {\n");
+            for (ColumnInfo col : columns) {
+                sb.append("        this.").append(col.name()).append(" = ").append(col.name()).append(";\n");
+            }
+            sb.append("    }\n\n");
+        }
+
+        // Getters and Setters
+        for (ColumnInfo col : columns) {
+            String fieldName = col.name();
+            String capitalizedField = capitalize(fieldName);
+
+            // Getter
+            sb.append("    public String get").append(capitalizedField).append("() {\n");
+            sb.append("        return ").append(fieldName).append(";\n");
+            sb.append("    }\n\n");
+
+            // Setter
+            sb.append("    public void set").append(capitalizedField).append("(String ").append(fieldName).append(") {\n");
+            sb.append("        this.").append(fieldName).append(" = ").append(fieldName).append(";\n");
+            sb.append("    }\n\n");
+        }
+
+        // toString method
+        sb.append("    @Override\n");
+        sb.append("    public String toString() {\n");
+        sb.append("        return ").append(buildToStringReturn(columns)).append(";\n");
+        sb.append("    }\n");
+
+        sb.append("}");
+        return sb.toString();
     }
 
     private String buildToStringReturn(List<ColumnInfo> columns) {
@@ -34,5 +74,12 @@ public class RecordCodeGenerator {
         }
         sb.append("}\"");
         return sb.toString();
+    }
+
+    private String capitalize(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
 }

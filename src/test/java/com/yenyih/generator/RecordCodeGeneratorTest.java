@@ -16,7 +16,20 @@ class RecordCodeGeneratorTest {
         String result = generator.generate(List.of(new ColumnInfo("name", 1, 20)));
 
         assertEquals(
-            "public record Record(String name) {\n" +
+            "public class Record {\n" +
+            "    private String name;\n" +
+            "\n" +
+            "    public Record() {\n" +
+            "    }\n\n" +
+            "    public Record(String name) {\n" +
+            "        this.name = name;\n" +
+            "    }\n\n" +
+            "    public String getName() {\n" +
+            "        return name;\n" +
+            "    }\n\n" +
+            "    public void setName(String name) {\n" +
+            "        this.name = name;\n" +
+            "    }\n\n" +
             "    @Override\n" +
             "    public String toString() {\n" +
             "        return \"Record{name='\" + name + \"'}\";\n" +
@@ -33,7 +46,28 @@ class RecordCodeGeneratorTest {
         ));
 
         assertEquals(
-            "public record Record(String name, String age) {\n" +
+            "public class Record {\n" +
+            "    private String name;\n" +
+            "    private String age;\n" +
+            "\n" +
+            "    public Record() {\n" +
+            "    }\n\n" +
+            "    public Record(String name, String age) {\n" +
+            "        this.name = name;\n" +
+            "        this.age = age;\n" +
+            "    }\n\n" +
+            "    public String getName() {\n" +
+            "        return name;\n" +
+            "    }\n\n" +
+            "    public void setName(String name) {\n" +
+            "        this.name = name;\n" +
+            "    }\n\n" +
+            "    public String getAge() {\n" +
+            "        return age;\n" +
+            "    }\n\n" +
+            "    public void setAge(String age) {\n" +
+            "        this.age = age;\n" +
+            "    }\n\n" +
             "    @Override\n" +
             "    public String toString() {\n" +
             "        return \"Record{name='\" + name + \"', age='\" + age + \"'}\";\n" +
@@ -43,11 +77,14 @@ class RecordCodeGeneratorTest {
     }
 
     @Test
-    void generatesEmptyRecord() {
+    void generatesEmptyClass() {
         String result = generator.generate(List.of());
 
         assertEquals(
-            "public record Record() {\n" +
+            "public class Record {\n" +
+            "\n" +
+            "    public Record() {\n" +
+            "    }\n\n" +
             "    @Override\n" +
             "    public String toString() {\n" +
             "        return \"Record{}\";\n" +
