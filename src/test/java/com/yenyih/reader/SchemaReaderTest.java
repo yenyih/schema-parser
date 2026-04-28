@@ -65,4 +65,20 @@ class SchemaReaderTest {
         var missing = tempDir.resolve("nonexistent.txt");
         assertThrows(UncheckedIOException.class, () -> new SchemaReader(missing).read());
     }
+
+    @Test
+    void throwsOnJavaKeywordFieldName() throws IOException {
+        var schema = tempDir.resolve("schema.txt");
+        Files.writeString(schema, "class 1 20");
+
+        assertThrows(SchemaParseException.class, () -> new SchemaReader(schema).read());
+    }
+
+    @Test
+    void throwsOnInvalidIdentifierFieldName() throws IOException {
+        var schema = tempDir.resolve("schema.txt");
+        Files.writeString(schema, "123bad 1 20");
+
+        assertThrows(SchemaParseException.class, () -> new SchemaReader(schema).read());
+    }
 }
