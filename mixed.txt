@@ -1,0 +1,7 @@
+John Doe            M 25
+INVALID
+Jane Smith          F 30
+
+Bob Johnson         M 45
+short
+Alice Williams      F 28
