@@ -23,6 +23,7 @@ public class Main {
 
             // 2. Generate Code
             String source = new RecordCodeGenerator().generate(columns);
+            System.out.println("Generated Code:\n" + source); // Debug: Print generated code
 
             // 3. Compile Code using Janino
             SimpleCompiler compiler = new SimpleCompiler();
