@@ -37,9 +37,9 @@ public class SchemaReader {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        var result = new ArrayList<ColumnInfo>();
+        ArrayList<ColumnInfo> result = new ArrayList<ColumnInfo>();
         for (int i = 0; i < lines.size(); i++) {
-            var line = lines.get(i);
+            String line = lines.get(i);
             if (!line.isBlank()) {
                 result.add(parseLine(i + 1, line));
             }
@@ -48,13 +48,13 @@ public class SchemaReader {
     }
 
     private ColumnInfo parseLine(int lineNumber, String line) {
-        var parts = line.trim().split("\\s+"); // trim handles accidental leading/trailing whitespace in field names
+        String[] parts = line.trim().split("\\s+"); // trim handles accidental leading/trailing whitespace in field names
         if (parts.length != 3) {
             throw new SchemaParseException(
                 "Line " + lineNumber + " must have 3 columns, got " + parts.length + ": \"" + line + "\""
             );
         }
-        var fieldName = parts[0];
+        String fieldName = parts[0];
         if (!isValidJavaIdentifier(fieldName)) {
             throw new SchemaParseException(
                 "Line " + lineNumber + " has invalid Java identifier \"" + fieldName + "\""

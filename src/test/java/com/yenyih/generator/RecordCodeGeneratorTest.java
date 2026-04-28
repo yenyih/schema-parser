@@ -13,7 +13,7 @@ class RecordCodeGeneratorTest {
 
     @Test
     void generatesSingleField() {
-        var result = generator.generate(List.of(new ColumnInfo("name", 1, 20)));
+        String result = generator.generate(List.of(new ColumnInfo("name", 1, 20)));
 
         assertEquals(
             "public record Record(String name) {\n" +
@@ -27,7 +27,7 @@ class RecordCodeGeneratorTest {
 
     @Test
     void generatesMultipleFields() {
-        var result = generator.generate(List.of(
+        String result = generator.generate(List.of(
             new ColumnInfo("name", 1, 20),
             new ColumnInfo("age", 22, 25)
         ));
@@ -44,7 +44,7 @@ class RecordCodeGeneratorTest {
 
     @Test
     void generatesEmptyRecord() {
-        var result = generator.generate(List.of());
+        String result = generator.generate(List.of());
 
         assertEquals(
             "public record Record() {\n" +

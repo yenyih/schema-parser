@@ -19,10 +19,10 @@ class SchemaReaderTest {
 
     @Test
     void parsesValidSchema() throws IOException {
-        var schema = tempDir.resolve("schema.txt");
+        Path schema = tempDir.resolve("schema.txt");
         Files.writeString(schema, "name 1 20\ngender 20 21\nage 22 25");
 
-        var result = new SchemaReader(schema).read();
+        List<ColumnInfo> result = new SchemaReader(schema).read();
 
         assertEquals(List.of(
             new ColumnInfo("name", 1, 20),
@@ -33,10 +33,10 @@ class SchemaReaderTest {
 
     @Test
     void skipsBlankLines() throws IOException {
-        var schema = tempDir.resolve("schema.txt");
+        Path schema = tempDir.resolve("schema.txt");
         Files.writeString(schema, "name 1 20\n\nage 22 25\n");
 
-        var result = new SchemaReader(schema).read();
+        List<ColumnInfo> result = new SchemaReader(schema).read();
 
         assertEquals(List.of(
             new ColumnInfo("name", 1, 20),
@@ -46,7 +46,7 @@ class SchemaReaderTest {
 
     @Test
     void throwsOnWrongColumnCount() throws IOException {
-        var schema = tempDir.resolve("schema.txt");
+        Path schema = tempDir.resolve("schema.txt");
         Files.writeString(schema, "name 1");
 
         assertThrows(SchemaParseException.class, () -> new SchemaReader(schema).read());
@@ -54,7 +54,7 @@ class SchemaReaderTest {
 
     @Test
     void throwsOnNonNumericPositions() throws IOException {
-        var schema = tempDir.resolve("schema.txt");
+        Path schema = tempDir.resolve("schema.txt");
         Files.writeString(schema, "name abc 20");
 
         assertThrows(SchemaParseException.class, () -> new SchemaReader(schema).read());
@@ -62,13 +62,13 @@ class SchemaReaderTest {
 
     @Test
     void throwsUncheckedIOExceptionForMissingFile() {
-        var missing = tempDir.resolve("nonexistent.txt");
+        Path missing = tempDir.resolve("nonexistent.txt");
         assertThrows(UncheckedIOException.class, () -> new SchemaReader(missing).read());
     }
 
     @Test
     void throwsOnJavaKeywordFieldName() throws IOException {
-        var schema = tempDir.resolve("schema.txt");
+        Path schema = tempDir.resolve("schema.txt");
         Files.writeString(schema, "class 1 20");
 
         assertThrows(SchemaParseException.class, () -> new SchemaReader(schema).read());
@@ -76,7 +76,7 @@ class SchemaReaderTest {
 
     @Test
     void throwsOnInvalidIdentifierFieldName() throws IOException {
-        var schema = tempDir.resolve("schema.txt");
+        Path schema = tempDir.resolve("schema.txt");
         Files.writeString(schema, "123bad 1 20");
 
         assertThrows(SchemaParseException.class, () -> new SchemaReader(schema).read());

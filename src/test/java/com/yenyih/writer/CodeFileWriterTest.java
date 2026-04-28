@@ -16,7 +16,7 @@ class CodeFileWriterTest {
 
     @Test
     void writesFileToCorrectPath() throws IOException {
-        var outputPath = tempDir.resolve("Record.java");
+        Path outputPath = tempDir.resolve("Record.java");
 
         new CodeFileWriter(outputPath).write("public record Record() {}");
 
@@ -25,7 +25,7 @@ class CodeFileWriterTest {
 
     @Test
     void createsMissingOutputDirectory() {
-        var outputPath = tempDir.resolve("output/Record.java");
+        Path outputPath = tempDir.resolve("output/Record.java");
 
         new CodeFileWriter(outputPath).write("public record Record() {}");
 

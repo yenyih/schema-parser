@@ -16,7 +16,7 @@ public class CodeFileWriter {
 
     public void write(String source) {
         try {
-            var parent = outputPath.getParent();
+            Path parent = outputPath.getParent();
             if (parent != null) {
                 Files.createDirectories(parent);
             }
