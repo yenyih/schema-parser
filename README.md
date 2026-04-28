@@ -1,10 +1,10 @@
 # schema-parser
 
-Schema-driven Java record generator. Plain Java + Maven.
+Schema-driven Java class generator. Plain Java + Maven.
 
 ## Purpose
 
-Reads a user-editable schema file and generates a Java 16+ `record` source file. Re-run whenever the schema changes.
+Reads a user-editable schema file and generates a traditional Java source file containing a class with private fields, constructors, getters, setters, and a `toString` method. Re-run whenever the schema changes.
 
 ## Schema File Format
 
@@ -16,6 +16,7 @@ gender 20 21
 age    22 25
 ```
 
+
 | Token | Description |
 |---|---|
 | field name | Valid Java identifier for the column (no spaces, no reserved words) |
@@ -25,21 +26,55 @@ age    22 25
 ## Architecture
 
 - Plain Maven project, Java 25
-- `Main.java` — entry point, reads `schema.txt` from working directory, writes to `output/Record.java`
-- `SchemaReader` — parses schema file into `List<ColumnInfo>`
-- `RecordCodeGenerator` — converts `List<ColumnInfo>` into a Java record source string
-- `CodeFileWriter` — writes the generated source to disk, creating directories as needed
+- [Main.java](src/main/java/com/yenyih/Main.java) — entry point, reads [schema.txt](schema.txt) from working directory, writes to [output/Record.java](output/Record.java)
+- [SchemaReader](src/main/java/com/yenyih/reader/SchemaReader.java#L12-L79) — parses schema file into `List<ColumnInfo>`
+- [RecordCodeGenerator](src/main/java/com/yenyih/generator/RecordCodeGenerator.java#L7-L84) — converts `List<ColumnInfo>` into a traditional Java class source string
+- [CodeFileWriter](src/main/java/com/yenyih/writer/CodeFileWriter.java#L8-L27) — writes the generated source to disk, creating directories as needed
 
 ## Key Classes
 
 | Class | Responsibility |
 |---|---|
-| `Main` | Entry point, wires pipeline, handles errors |
+| [Main](src/main/java/com/yenyih/Main.java#L12-L27) | Entry point, wires pipeline, handles errors |
 | `ColumnInfo` | Immutable record: field name, start position, end position |
-| `SchemaReader` | Reads and validates schema file, throws `SchemaParseException` on bad lines |
-| `RecordCodeGenerator` | Stateless: `List<ColumnInfo>` → `public record Record(...) {}` string |
-| `CodeFileWriter` | Writes UTF-8 source to output path, creates parent directories |
-| `SchemaParseException` | Unchecked exception for malformed schema lines |
+| [SchemaReader](src/main/java/com/yenyih/reader/SchemaReader.java#L12-L79) | Reads and validates schema file, throws [SchemaParseException](src/main/java/com/yenyih/reader/SchemaParseException.java#L2-L10) on bad lines |
+| [RecordCodeGenerator](src/main/java/com/yenyih/generator/RecordCodeGenerator.java#L7-L84) | Stateless: `List<ColumnInfo>` → `public class Record { ... }` string with fields, constructors, getters, setters |
+| [CodeFileWriter](src/main/java/com/yenyih/writer/CodeFileWriter.java#L8-L27) | Writes UTF-8 source to output path, creates parent directories |
+| [SchemaParseException](src/main/java/com/yenyih/reader/SchemaParseException.java#L2-L10) | Unchecked exception for malformed schema lines |
+
+## Generated Code Structure
+
+The generator produces a standard Java bean-like structure:
+
+```java
+public class Record {
+    private String name;
+    private String age;
+
+    public Record() {
+    }
+
+    public Record(String name, String age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // ... other getters and setters ...
+
+    @Override
+    public String toString() {
+        return "Record{name='" + name + "', age='" + age + "'}";
+    }
+}
+```
 
 ## Error Handling
 
