@@ -1,4 +1,4 @@
-# schemaParser
+# schema-parser
 
 Schema-driven Java record generator. Plain Java + Maven.
 
