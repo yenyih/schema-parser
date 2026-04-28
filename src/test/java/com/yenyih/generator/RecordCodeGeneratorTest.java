@@ -15,7 +15,14 @@ class RecordCodeGeneratorTest {
     void generatesSingleField() {
         var result = generator.generate(List.of(new ColumnInfo("name", 1, 20)));
 
-        assertEquals("public record Record(String name) {}", result);
+        assertEquals(
+            "public record Record(String name) {\n" +
+            "    @Override\n" +
+            "    public String toString() {\n" +
+            "        return \"Record{name='\" + name + \"'}\";\n" +
+            "    }\n" +
+            "}",
+            result);
     }
 
     @Test
@@ -25,13 +32,27 @@ class RecordCodeGeneratorTest {
             new ColumnInfo("age", 22, 25)
         ));
 
-        assertEquals("public record Record(String name, String age) {}", result);
+        assertEquals(
+            "public record Record(String name, String age) {\n" +
+            "    @Override\n" +
+            "    public String toString() {\n" +
+            "        return \"Record{name='\" + name + \"', age='\" + age + \"'}\";\n" +
+            "    }\n" +
+            "}",
+            result);
     }
 
     @Test
     void generatesEmptyRecord() {
         var result = generator.generate(List.of());
 
-        assertEquals("public record Record() {}", result);
+        assertEquals(
+            "public record Record() {\n" +
+            "    @Override\n" +
+            "    public String toString() {\n" +
+            "        return \"Record{}\";\n" +
+            "    }\n" +
+            "}",
+            result);
     }
 }
