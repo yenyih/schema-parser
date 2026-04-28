@@ -18,6 +18,7 @@ public class SchemaReader {
     }
 
     public List<ColumnInfo> read() {
+        // Schema files are always small; readAllLines is fine here
         List<String> lines;
         try {
             lines = Files.readAllLines(schemaPath);
@@ -35,7 +36,7 @@ public class SchemaReader {
     }
 
     private ColumnInfo parseLine(int lineNumber, String line) {
-        var parts = line.trim().split("\\s+");
+        var parts = line.trim().split("\\s+"); // trim handles accidental leading/trailing whitespace in field names
         if (parts.length != 3) {
             throw new SchemaParseException(
                 "Line " + lineNumber + " must have 3 columns, got " + parts.length + ": \"" + line + "\""
@@ -45,7 +46,7 @@ public class SchemaReader {
             return new ColumnInfo(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
         } catch (NumberFormatException e) {
             throw new SchemaParseException(
-                "Line " + lineNumber + " has non-numeric start/end: \"" + line + "\""
+                "Line " + lineNumber + " has non-numeric start/end: \"" + line + "\"", e
             );
         }
     }

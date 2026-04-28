@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -37,7 +38,10 @@ class SchemaReaderTest {
 
         var result = new SchemaReader(schema).read();
 
-        assertEquals(2, result.size());
+        assertEquals(List.of(
+            new ColumnInfo("name", 1, 20),
+            new ColumnInfo("age", 22, 25)
+        ), result);
     }
 
     @Test
@@ -54,5 +58,11 @@ class SchemaReaderTest {
         Files.writeString(schema, "name abc 20");
 
         assertThrows(SchemaParseException.class, () -> new SchemaReader(schema).read());
+    }
+
+    @Test
+    void throwsUncheckedIOExceptionForMissingFile() {
+        var missing = tempDir.resolve("nonexistent.txt");
+        assertThrows(UncheckedIOException.class, () -> new SchemaReader(missing).read());
     }
 }
